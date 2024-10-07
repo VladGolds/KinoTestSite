@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Админ панель</title>
+    <link rel="stylesheet" href="admin.css">
+    <script type="module">
+        // Импорт необходимых функций из Firebase SDK
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
+        import { getDatabase, ref, set, onValue, get } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-database.js";
+
+        // Ваши настройки Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyBSoLu_7Z9MTOUQPrBXtMpKxn-DT4Hi8M0",
+            authDomain: "films-fa532.firebaseapp.com",
+            databaseURL: "https://films-fa532-default-rtdb.europe-west1.firebasedatabase.app",
+            projectId: "films-fa532",
+            storageBucket: "films-fa532.appspot.com",
+            messagingSenderId: "412236069839",
+            appId: "1:412236069839:web:09caa4d94e1349e006b0ba"
+        };
+
+        // Инициализация Firebase
+        const app = initializeApp(firebaseConfig);
+        const database = getDatabase(app);
+        
+        // Обработчик отправки формы
+        document.addEventListener('DOMContentLoaded', () => {
+            const form = document.getElementById('add-movie-form');
+
+            form.addEventListener('submit', (e) => {
+                e.preventDefault();
+
+                const idName = document.getElementById('idName').value;
+                const title = document.getElementById('title').value;
+                const releaseYear = document.getElementById('releaseYear').value;
+                const country = document.getElementById('country').value;
+                const genre = document.getElementById('genre').value;
+                const director = document.getElementById('director').value;
+                const actors = document.getElementById('actors').value;
+                const description = document.getElementById('description').value;
+                const kinopoiskId = document.getElementById('kinopoiskId').value;
+                const poster = document.getElementById('poster').value;
+
+                // Проверка на заполнение поля уникального ID
+                if (!idName) {
+                    alert('Пожалуйста, введите уникальное ID для фильма!');
+                    return;
+                }
+
+                // Преобразование idName (например, "the_matrix")
+                const movieId = idName.toLowerCase().replace(/\s+/g, '_').replace(/[^a-z0-9_]/g, '');
+
+                // Ссылка на базу данных Firebase (movies collection)
+                const movieRef = ref(database, 'movies/' + movieId);
+
+                set(movieRef, {
+                    title: title,
+                    releaseYear: releaseYear,
+                    country: country,
+                    genre: genre,
+                    director: director,
+                    actors: actors,
+                    description: description,
+                    kinopoiskId: kinopoiskId,
+                    poster: poster
+                }).then(() => {
+                    alert("Фильм добавлен!");
+                    document.getElementById('add-movie-form').reset();
+                }).catch((error) => {
+                    console.error("Ошибка добавления фильма: ", error);
+                });
+            });
+        });
+    </script>
+</head>
+<body>
+    <form id="add-movie-form" class="add-movie-form">
+        <input type="text" id="idName" placeholder="Уникальное ID (на английском)" required>
+        <input type="text" id="title" placeholder="Название фильма" required>
+        <input type="text" id="releaseYear" placeholder="Год" required>
+        <input type="text" id="country" placeholder="Страна" required>
+        <input type="text" id="genre" placeholder="Жанр" required>
+        <input type="text" id="director" placeholder="Режиссер" required>
+        <input type="text" id="actors" placeholder="Актеры" required>
+        <input type="text" id="description" placeholder="Описание" required>
+        <input type="text" id="kinopoiskId" placeholder="ID плеера с Кинопоиска" required>
+        <input type="text" id="poster" placeholder="URL постера" required>
+        <button type="submit">Добавить фильм</button>
+    </form>
+</body>
+</html>

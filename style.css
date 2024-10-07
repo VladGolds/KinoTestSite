@@ -1,0 +1,263 @@
+/* Общие стили */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #222;
+    color: #fff;
+    margin: 0;
+    padding: 0;
+}
+
+/* Позиционирование кнопок Вход/Регистрация */
+.auth-buttons {
+    position: absolute;
+    top: 10px;  /* Высота от верхнего края */
+    right: 10px;  /* Расстояние от правого края */
+    display: flex;  /* Расположим кнопки в ряд */
+}
+
+.auth-button {
+    background-color: #333;
+    color: #fff;
+    border: none;
+    padding: 10px 15px;
+    margin-left: 0%;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.auth-button:hover {
+    background-color: #333;
+}
+
+/* Стили для выпадающего меню */
+.welcome-container {
+    position: relative;
+    display: inline-block;
+}
+
+.dropdown-menu {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 20px;
+    background-color: #f0f0f0;
+    box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+    z-index: 1;
+    padding: 10px;
+    border-radius: 5px;
+    width: 140px;
+    height: 10px;
+}
+
+.dropdown-menu button {
+    background-color: #d3d3d3; /* Светло-серый фон для кнопки */
+    border: none;
+    padding: -1px 7px;
+    cursor: pointer;
+    color: #333;
+    font-size: 12px;
+    width: 50px;
+    height: 20px;
+    text-align: left;
+    border-radius: 4px;
+    margin-top: -11px; /* Поднимаем кнопку */
+    position: relative;
+    top: -6px; /* Поднимаем кнопку вверх */
+    left: 0px;
+}
+
+.dropdown-menu button:hover {
+    background-color: #bcbcbc;
+}
+
+/* Показать меню при клике */
+.show {
+    display: block;
+}
+
+/* Форма добавления фильма */
+.add-movie-form {
+    margin: 20px;
+    background-color: #333;
+    padding: 20px;
+    border-radius: 10px;
+}
+
+.add-movie-form input, .add-movie-form textarea {
+    width: 100%;
+    margin-bottom: 10px;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    background-color: #444;
+    color: #fff;
+}
+
+.add-movie-form button {
+    padding: 10px 20px;
+    background-color: #ff0000;
+    border: none;
+    color: #fff;
+    cursor: pointer;
+}
+
+.add-movie-form button:hover {
+    background-color: #cc0000;
+}
+
+header {
+    background-color: #333;
+    padding: 20px;
+    text-align: center;
+    position: relative;
+}
+
+h1 {
+    margin: 0;
+    color: #f00;
+}
+
+/* Навигация и поиск */
+nav {
+    display: flex;
+    justify-content: space-between;
+    background-color: #444;
+    padding: 10px;
+}
+
+.categories {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap; /* Разрешаем перенос элементов */
+    max-width: 1000px; /* Ограничиваем ширину, чтобы элементы переносились */
+    justify-content: center; /* Центрируем элементы */
+    gap: 0px; /* Задаем промежутки между элементами */
+}
+
+.categories li {
+    margin-right: 20px;
+    margin-bottom: 0px; /* Добавляем отступ между строками */
+    display: flex;
+    justify-content: center; /* Центрируем текст по горизонтали */
+    align-items: center; /* Центрируем текст по вертикали */
+    width: 100px; /* Фиксированная ширина для квадратов */
+    height: 50px; /* Высота равна ширине для создания квадратов */
+    background-color: #333; /* Цвет фона квадрата */
+    color: #fff; /* Цвет текста */
+    border: 1px solid #000; /* Опционально: граница */
+    text-align: center;
+    font-size: 14px; /* Размер шрифта */
+    cursor: pointer;
+}
+
+.categories a {
+    display: block; /* Делаем ссылку блочным элементом */
+    width: 100%;    /* Занимаем всю ширину родителя */
+    height: 100%;   /* Занимаем всю высоту родителя */
+    color: #fff;
+    text-decoration: none;
+    font-weight: bold;
+    display: flex; /* Центрируем текст по вертикали и горизонтали */
+    justify-content: center;
+    align-items: center;
+}
+
+.categories li.active {
+    border: 2px solid #ff0000; /* Красная граница для активного элемента */
+}
+
+.categories li:hover {
+    transform: scale(1.1); /* Увеличение на 10% */
+    transition: transform 0.3s ease; /* Плавная анимация */
+}
+
+.search-bar {
+    display: flex;
+}
+
+.search-bar input {
+    padding: 5px;
+    font-size: 16px;
+}
+
+.search-bar button {
+    padding: 6px 10px;
+    background-color: #f00;
+    border: none;
+    color: #fff;
+    cursor: pointer;
+}
+
+/* Основной контент */
+.container {
+    padding: 20px;
+}
+
+.movies-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+}
+
+.movie-card {
+    background-color: #333;
+    padding: 10px;
+    width: 150px;
+    text-align: center;
+    transition: transform 0.3s ease; /* Анимация */
+}
+
+.movie-card img {
+    max-width: 100%;
+    border-radius: 5px;
+}
+
+.movie-card h3 {
+    margin: 10px 0 0;
+    font-size: 16px;
+    color: #fff;
+}
+
+.movie-card:hover {
+    transform: scale(1.1); /* Увеличение карточки при наведении */
+}
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.pagination button {
+    background-color: #007bff; /* Цвет фона кнопки */
+    color: white; /* Цвет текста */
+    border: none; /* Убираем рамку */
+    padding: 10px 15px; /* Отступы */
+    margin: 0 5px; /* Отступы между кнопками */
+    border-radius: 5px; /* Закругленные углы */
+    cursor: pointer; /* Указатель мыши при наведении */
+    transition: background-color 0.3s; /* Анимация изменения цвета */
+}
+
+.pagination button:hover {
+    background-color: #0056b3; /* Цвет фона при наведении */
+}
+
+.pagination button:disabled {
+    background-color: #ccc; /* Цвет фона для неактивной кнопки */
+    cursor: not-allowed; /* Указатель мыши для неактивной кнопки */
+}
+
+/* Footer */
+footer {
+    text-align: center;
+    background-color: #333;
+    padding: 20px;
+    position: fixed;
+    width: 100%;
+    bottom: 0;
+    left: 0;
+}

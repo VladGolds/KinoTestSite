@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Криминал - Онлайн Кинотеатр</title>
+    <link rel="stylesheet" href="style.css">
+    <script type="module">
+        // Импорт необходимых функций из Firebase SDK
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
+        import { getDatabase, ref, get, onValue } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-database.js";
+
+        // Ваши настройки Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyBSoLu_7Z9MTOUQPrBXtMpKxn-DT4Hi8M0",
+            authDomain: "films-fa532.firebaseapp.com",
+            databaseURL: "https://films-fa532-default-rtdb.europe-west1.firebasedatabase.app",
+            projectId: "films-fa532",
+            storageBucket: "films-fa532.appspot.com",
+            messagingSenderId: "412236069839",
+            appId: "1:412236069839:web:09caa4d94e1349e006b0ba"
+        };
+
+        // Инициализация Firebase
+        const app = initializeApp(firebaseConfig);
+        const database = getDatabase(app);
+        const moviesRef = ref(database, 'movies');
+
+        // Параметры для пагинации
+        const moviesPerPage = 35;  // Количество фильмов на одной странице
+        let currentPage = new URLSearchParams(window.location.search).get('page') || 1;  // Текущая страница
+        currentPage = parseInt(currentPage);  // Преобразуем в число
+
+        const moviesGrid = document.getElementById('movies-grid');
+        const paginationContainer = document.getElementById('pagination');
+
+        // Получение и отображение фильмов с пагинацией
+        get(moviesRef).then((snapshot) => {
+            if (snapshot.exists()) {
+                const movies = [];
+                snapshot.forEach((childSnapshot) => {
+                    const movie = childSnapshot.val();
+                    if (movie.genre && movie.genre.includes('боевик')) {
+                        movies.push({ id: childSnapshot.key, ...movie });
+                    }
+                });
+
+                // Общий подсчет страниц
+                const totalMovies = movies.length;
+                const totalPages = Math.ceil(totalMovies / moviesPerPage);
+
+                // Вычисляем фильмы для отображения на текущей странице
+                const startIndex = (currentPage - 1) * moviesPerPage;
+                const endIndex = startIndex + moviesPerPage;
+                const moviesToDisplay = movies.slice(startIndex, endIndex);
+
+                // Отображаем фильмы на текущей странице
+                moviesGrid.innerHTML = '';
+                moviesToDisplay.forEach((movie) => {
+                    const movieCard = `
+                        <div class="movie-card">
+                            <a href="description.html?movieId=${movie.id}">
+                                <img src="${movie.poster}" alt="${movie.title}">
+                                <h3>${movie.title}</h3>
+                            </a>
+                            <div id="kinoplayertop" data-kinopoisk="${movie.kinopoiskId}"></div>
+                        </div>`;
+                    moviesGrid.innerHTML += movieCard;
+                });
+
+                // Подгружаем скрипт после отображения фильмов
+                const script = document.createElement('script');
+                script.src = "https://kinoplayer.top/top.js";
+                document.body.appendChild(script);
+
+                // Генерация кнопок для навигации по страницам
+                paginationContainer.innerHTML = '';
+                if (currentPage > 1) {
+                    paginationContainer.innerHTML += `<button onclick="changePage(${currentPage - 1})">Предыдущая</button>`;
+                }
+                for (let i = 1; i <= totalPages; i++) {
+                    paginationContainer.innerHTML += `<button onclick="changePage(${i})">${i}</button>`;
+                }
+                if (currentPage < totalPages) {
+                    paginationContainer.innerHTML += `<button onclick="changePage(${currentPage + 1})">Следующая</button>`;
+                }
+            } else {
+                console.log("Нет данных");
+            }
+        }).catch((error) => {
+            console.error("Ошибка получения данных: ", error);
+        });
+
+        // Функция для смены страницы
+        function changePage(pageNumber) {
+            window.location.href = `?page=${pageNumber}`;
+        }
+
+        // Делаем функцию глобальной
+        window.changePage = changePage;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const currentPage = window.location.pathname.split('/').pop(); // Получаем имя текущей страницы
+            const categories = document.querySelectorAll('.categories li'); // Находим все элементы списка в категории
+
+            categories.forEach(category => {
+                const link = category.querySelector('a'); // Находим ссылку внутри элемента списка
+                if (link.getAttribute('href') === currentPage) {
+                    category.classList.add('active'); // Добавляем активный класс к текущему элементу списка
+                } else {
+                    category.classList.remove('active'); // Удаляем активный класс с других элементов
+                }
+            });
+        });
+    </script>
+</head>
+<body>
+    <header>
+        <h1 style="text-align: center; color: #ff0000;">Test Films</h1>
+        <h2>Фильмы - Боевики</h2>
+    </header>
+
+    <!-- Панель с категориями -->
+    <nav>
+        <ul class="categories">
+            <li><a href="criminal.html">Криминал</a></li>
+            <li><a href="action.html">Боевик</a></li>
+            <li><a href="#">Военный</a></li>
+            <li><a href="#">Детектив</a></li>
+            <li><a href="#">Ужасы</a></li>
+            <li><a href="#">Комедия</a></li>
+            <li><a href="#">Фанстастика</a></li>
+            <li><a href="#">Триллер</a></li>
+        </ul>
+        <div class="search-bar">
+            <input type="text" placeholder="Название фильма...">
+            <button>Поиск</button>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="movies-grid" id="movies-grid">
+            <!-- Фильмы будут загружены динамически -->
+        </div>
+         <!-- Контейнер для кнопок пагинации -->
+        <div id="pagination" class="pagination"></div>
+    </div>
+
+    <footer>
+        <p>© 2024 Test Films. Все права защищены.</p>
+    </footer>
+</body>
+</html>

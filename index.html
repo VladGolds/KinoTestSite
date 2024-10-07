@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Онлайн Кинотеатр</title>
+    <link rel="stylesheet" href="style.css">
+    <script type="module">
+        // Импорт необходимых функций из Firebase SDK
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
+        import { getDatabase, ref, set, onValue, get } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-database.js";
+
+        // Ваши настройки Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyBSoLu_7Z9MTOUQPrBXtMpKxn-DT4Hi8M0",
+            authDomain: "films-fa532.firebaseapp.com",
+            databaseURL: "https://films-fa532-default-rtdb.europe-west1.firebasedatabase.app",
+            projectId: "films-fa532",
+            storageBucket: "films-fa532.appspot.com",
+            messagingSenderId: "412236069839",
+            appId: "1:412236069839:web:09caa4d94e1349e006b0ba"
+        };
+
+        // Инициализация Firebase
+        const app = initializeApp(firebaseConfig);
+        const database = getDatabase(app);
+        const moviesRef = ref(database, 'movies');
+
+        // Отправка текущей даты в базу данных
+        function sendDate() {
+            const today = new Date().toISOString().slice(0, 10);
+            set(ref(database, 'dates/' + today), {
+                date: today
+            }).then(() => {
+                console.log("Дата успешно отправлена в базу данных:", today);
+            }).catch((error) => {
+                console.error("Ошибка при отправке даты:", error);
+            });
+        }
+
+        sendDate();
+
+        get(moviesRef).then((snapshot) => {
+            moviesGrid.innerHTML = ''; 
+
+            if (snapshot.exists()) {
+                const data = snapshot.val();
+                Object.keys(data).forEach(key => {
+                    const movie = data[key];
+
+                    // Создаем карточку фильма
+                    const movieCard = document.createElement("div");
+                    movieCard.classList.add("movie-card");
+
+                    // Создаем ссылку на описание фильма
+                    const movieLink = document.createElement("a");
+                    movieLink.href = `description.html?movieId=${key}`;
+
+                    // Создаем изображение
+                    const movieImage = document.createElement("img");
+                    movieImage.src = movie.poster;
+                    movieImage.alt = movie.title;
+
+                    // Создаем заголовок фильма
+                    const movieTitle = document.createElement("h3");
+                    movieTitle.textContent = movie.title;
+
+                    // Собираем элементы
+                    movieLink.appendChild(movieImage);
+                    movieLink.appendChild(movieTitle);
+                    movieCard.appendChild(movieLink);
+                    moviesGrid.appendChild(movieCard);
+                });
+
+                // Динамически загружаем скрипт после добавления карточек
+                const script = document.createElement('script');
+                script.src = "https://kinoplayer.top/top.js";
+                document.body.appendChild(script);
+            } else {
+                console.log("Нет данных");
+                const noDataMessage = document.createElement("p");
+                noDataMessage.textContent = "Нет доступных фильмов.";
+                moviesGrid.appendChild(noDataMessage);
+            }
+        }).catch((error) => {
+            console.error("Ошибка получения данных: ", error);
+        });
+        // Проверка имени пользователя при загрузке страницы
+        document.addEventListener('DOMContentLoaded', () => {
+            const username = localStorage.getItem('username');
+            const authButton = document.getElementById('auth-button');
+            const adminButton = document.querySelector('.admin-button');
+            const welcomeMessageContainer = document.querySelector('.auth-buttons');
+            const welcomeMessage = document.getElementById('welcome-message');
+            const dropdownMenu = document.getElementById('dropdown-menu');
+            const logoutButton = document.getElementById('logout-button');
+
+            if (username) {
+                authButton?.remove(); // Удаляем кнопку регистрации/входа
+                const welcomeMessage = document.createElement('span');
+                welcomeMessage.textContent = `Добро пожаловать, ${username}!`;
+                welcomeMessageContainer.appendChild(welcomeMessage); // Добавляем элемент с приветствием
+
+                // Показ выпадающего меню при клике на приветственное сообщение
+                welcomeMessage.addEventListener('click', () => {
+                    dropdownMenu.classList.toggle('show');
+
+                });
+
+                // Обработчик клика на кнопку "Выход"
+                logoutButton.addEventListener('click', () => {
+                    localStorage.removeItem('username'); // Удаляем имя пользователя из localStorage
+                    window.location.reload(); // Перезагружаем страницу
+                });
+                
+                // Получаем информацию о пользователе из Firebase
+                const userRef = ref(database, 'users/' + username);
+                get(userRef).then((snapshot) => {
+                    if (snapshot.exists()) {
+                        const userData = snapshot.val();
+
+                        // Проверяем роль пользователя
+                        if (userData.role === 'admin') {
+                            adminButton.style.display = 'block'; // Показываем кнопку для админов
+                        } else {
+                            adminButton.style.display = 'none'; // Скрываем кнопку для обычных пользователей
+                        }
+                    } else {
+                        console.log('Пользователь не найден в базе данных.');
+                        adminButton.style.display = 'none'; // Если пользователя нет, скрываем кнопку
+                    }
+                }).catch((error) => {
+                    console.error("Ошибка получения данных: ", error);
+                    adminButton.style.display = 'none'; // Если произошла ошибка, скрываем кнопку
+                });
+            } else {
+                adminButton.style.display = 'none'; // Если пользователь не авторизован, скрываем кнопку
+            }
+            // Обработчик для навигации по категориям
+            const currentPage = window.location.pathname.split('/').pop(); // Получаем имя текущей страницы
+            const categories = document.querySelectorAll('.categories li a'); // Находим все ссылки в категории
+
+            categories.forEach(category => {
+                if (category.getAttribute('href') === currentPage) {
+                    category.classList.add('active'); // Добавляем активный класс к текущей ссылке
+                }
+            });
+        });
+
+        // Параметры для пагинации
+        const moviesPerPage = 35;  // Количество фильмов на одной странице
+        let currentPage = new URLSearchParams(window.location.search).get('page') || 1;  // Текущая страница
+        currentPage = parseInt(currentPage);  // Преобразуем в число
+
+        const moviesGrid = document.getElementById('movies-grid');
+        const paginationContainer = document.getElementById('pagination');
+
+        // Получение и отображение фильмов с пагинацией
+        get(moviesRef).then((snapshot) => {
+            if (snapshot.exists()) {
+                const movies = [];
+                snapshot.forEach((childSnapshot) => {
+                    movies.push({ id: childSnapshot.key, ...childSnapshot.val() });
+                });
+
+                // Общий подсчет страниц
+                const totalMovies = movies.length;
+                const totalPages = Math.ceil(totalMovies / moviesPerPage);
+
+                // Вычисляем фильмы для отображения на текущей странице
+                const startIndex = (currentPage - 1) * moviesPerPage;
+                const endIndex = startIndex + moviesPerPage;
+                const moviesToDisplay = movies.slice(startIndex, endIndex);
+
+                // Отображаем фильмы на текущей странице
+                moviesGrid.innerHTML = '';
+                moviesToDisplay.forEach((movie) => {
+                    const movieCard = `
+                        <div class="movie-card">
+                            <a href="description.html?movieId=${movie.id}">
+                                <img src="${movie.poster}" alt="${movie.title}">
+                                <h3>${movie.title}</h3>
+                            </a>
+                        </div>
+                    `;
+                    moviesGrid.innerHTML += movieCard;
+                });
+
+                // Генерация кнопок для навигации по страницам
+                paginationContainer.innerHTML = '';
+                if (currentPage > 1) {
+                    paginationContainer.innerHTML += `<button onclick="changePage(${currentPage - 1})">Предыдущая</button>`;
+                }
+                for (let i = 1; i <= totalPages; i++) {
+                    paginationContainer.innerHTML += `<button onclick="changePage(${i})">${i}</button>`;
+                }
+                if (currentPage < totalPages) {
+                    paginationContainer.innerHTML += `<button onclick="changePage(${currentPage + 1})">Следующая</button>`;
+                }
+            } else {
+                console.log("Нет данных");
+            }
+        }).catch((error) => {
+            console.error("Ошибка получения данных: ", error);
+        });
+
+        // Функция для смены страницы
+        function changePage(pageNumber) {
+            window.location.href = `index.html?page=${pageNumber}`;
+        }
+
+        // Делаем функцию глобальной
+        window.changePage = changePage;
+    </script>
+</head>
+<body>
+    <header>
+        <div class="auth-buttons">
+            <a href="account.html" id="auth-button" class="auth-button">Регистрация / Вход</a>
+
+            <div id="welcome-container" class="welcome-container">
+                <span id="welcome-message"></span>
+                <div id="dropdown-menu" class="dropdown-menu">
+                    <button id="logout-button">Выход</button>
+                </div>
+            </div>
+        </div>
+        <h1>Test Films</h1>
+    </header>
+
+    <!-- Панель с категориями -->
+    <nav>
+        <ul class="categories">
+            <li><a href="criminal.html">Криминал</a></li>
+            <li><a href="action.html">Боевик</a></li>
+            <li><a href="#M">Военный</a></li>
+            <li><a href="#">Детектив</a></li>
+            <li><a href="#">Ужасы</a></li>
+            <li><a href="#">Комедия</a></li>
+            <li><a href="#">Фанстастика</a></li>
+            <li><a href="#">Триллер</a></li>
+        </ul>
+        <div class="search-bar">
+            <input type="text" placeholder="Название фильма...">
+            <button>Поиск</button>
+        </div>
+    </nav>
+
+    <!-- Кнопка для перехода на admin.html -->
+    <div class="admin-button">
+        <a href="admin.html">
+            <button>Перейти в админ панель</button>
+        </a>
+    </div>
+    
+    <!-- Основной контент -->
+    <div class="container">
+        <div class="movies-grid" id="movies-grid">
+            <div class="movie-card">
+                <a href="description.html">
+                    <img src="poster1.jpg" alt="Новобранец">
+                    <h3>Новобранец</h3>
+                </a>
+            </div>
+            <!-- Добавить больше фильмов -->
+            <div class="movie-card">
+                <a href="description.html">
+                    <img src="poster1.jpg" alt="Новобранец">
+                    <h3>Пехотинец Серия 20344</h3>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Контейнер для кнопок пагинации -->
+    <div id="pagination" class="pagination"></div>
+</body>
+</html>

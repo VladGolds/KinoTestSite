@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title id="movie-title">Описание фильма</title>
+    <link rel="stylesheet" href="description.css">
+    <script type="module">
+        // Импорт необходимых функций из Firebase SDK
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
+        import { getDatabase, ref, set, onValue, get } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-database.js";
+
+        // Ваши настройки Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyBSoLu_7Z9MTOUQPrBXtMpKxn-DT4Hi8M0",
+            authDomain: "films-fa532.firebaseapp.com",
+            databaseURL: "https://films-fa532-default-rtdb.europe-west1.firebasedatabase.app",
+            projectId: "films-fa532",
+            storageBucket: "films-fa532.appspot.com",
+            messagingSenderId: "412236069839",
+            appId: "1:412236069839:web:09caa4d94e1349e006b0ba"
+        };
+
+        // Инициализация Firebase
+        const app = initializeApp(firebaseConfig);
+        const database = getDatabase(app);
+
+        // Получаем movieId из URL
+        const params = new URLSearchParams(window.location.search);
+        const movieId = params.get('movieId');
+
+        if (movieId) {
+            const movieRef = ref(database, 'movies/' + movieId);
+
+            get(movieRef).then((snapshot) => {
+                if (snapshot.exists()) {
+                    const movie = snapshot.val();
+
+                    document.getElementById('movie-title').innerText = movie.title; // Динамически меняем заголовок
+                    document.getElementById('movie-name').innerText = movie.title;
+                    document.getElementById('movie-poster').src = movie.poster;
+                    document.getElementById('movie-year').innerText = movie.releaseYear;
+                    document.getElementById('movie-country').innerText = movie.country;
+                    document.getElementById('movie-genre').innerText = movie.genre;
+                    document.getElementById('movie-director').innerText = movie.director;
+                    document.getElementById('movie-actors').innerText = movie.actors;
+                    document.getElementById('movie-description').innerText = movie.description;
+                    document.getElementById('kinoplayertop').setAttribute('data-kinopoisk', movie.kinopoiskId);
+
+                    // Инициализация плеера после получения данных
+                    loadPlayer();
+                    
+                } else {
+                    console.log("Нет данных для этого фильма");
+                }
+            }).catch((error) => {
+                console.error("Ошибка получения данных: ", error);
+            });
+        } else {
+            console.log("movieId не найден в URL");
+        }
+
+        // Функция для инициализации плеера после получения данных
+        function loadPlayer() {
+            // Здесь инициализируем скрипт плеера top.js
+            kinoplayer_run();
+        }
+    </script>
+</head>
+<body>
+    <h1 style="text-align: center; color: #ff0000;">
+            <a href="index.html" style="text-decoration: none; color: inherit;">Test Films</a>
+    </h1>
+
+    <!-- Панель с категориями -->
+    <nav>
+        <ul class="categories">
+            <li><a href="criminal.html">Криминал</a></li>
+            <li><a href="action.html">Боевик</a></li>
+            <li><a href="#">Военный</a></li>
+            <li><a href="#">Детектив</a></li>
+            <li><a href="#">Ужасы</a></li>
+            <li><a href="#">Комедия</a></li>
+            <li><a href="#">Фанстастика</a></li>
+            <li><a href="#">Триллер</a></li>
+        </ul>
+    </nav>
+
+    <div class="container">
+        <div class="content">
+            <div class="poster">
+                <img id="movie-poster" src="poster1.jpg" alt="Постер фильма">
+            </div>
+            <div class="details">
+                <h1 id="movie-name">Unknown</h1>
+                <p><strong>Год:</strong> <span id="movie-year">Unknown</span></p>
+                <p><strong>Страна:</strong> <span id="movie-country">Unknown</span></p>
+                <p><strong>Жанр:</strong> <span id="movie-genre">Unknown</span></p>
+                <p><strong>Режиссер:</strong> <span id="movie-director">Unknown</span></p>
+                <p><strong>Актеры:</strong> <span id="movie-actors">Unknown</span></p>
+            </div>
+        </div>
+
+        <div class="description">
+            <h2>Про фильм</h2>
+            <p id="movie-description">Описание фильма...</p>
+        </div>
+    </div>
+
+    <!-- Видеоплеер -->
+    <div class="movie">
+        <!-- Плеер с фильмом, где data-kinopoisk это ID фильма с Кинопоиска -->
+        <div id="kinoplayertop" data-kinopoisk=""></div>
+        <!-- Подключение скрипта плеера через HTTPS -->
+    </div>
+
+    <div class="container_banner">
+        <div class="content_banner">
+            <div class="banner_left">Левый баннер</div>
+            <div class="banner_right">Правый баннер</div>
+        </div>
+    </div>
+
+    <!-- Скрипты -->
+    <script src="top.js"></script>
+</body>
+</html>

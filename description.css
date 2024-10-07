@@ -1,0 +1,179 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #141414;
+    color: #fff;
+}
+
+/* Навигация и поиск */
+nav {
+    display: flex;
+    justify-content: space-between;
+    background-color: #444;
+    padding: 10px;
+    margin-top: 20px;
+}
+
+.categories {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap; /* Разрешаем перенос элементов */
+    max-width: 1000px; /* Ограничиваем ширину, чтобы элементы переносились */
+    justify-content: center; /* Центрируем элементы */
+    gap: 0px; /* Задаем промежутки между элементами */
+    margin-left: 280px;
+}
+
+.categories li {
+    margin-right: 10px;
+    margin-bottom: 0px; /* Добавляем отступ между строками */
+    display: flex;
+    justify-content: center; /* Центрируем текст по горизонтали */
+    align-items: center; /* Центрируем текст по вертикали */
+    width: 100px; /* Фиксированная ширина для квадратов */
+    height: 50px; /* Высота равна ширине для создания квадратов */
+    background-color: #333; /* Цвет фона квадрата */
+    color: #fff; /* Цвет текста */
+    border: 1px solid #000; /* Опционально: граница */
+    text-align: center;
+    font-size: 14px; /* Размер шрифта */
+    cursor: pointer;
+}
+
+.categories a {
+    display: block; /* Делаем ссылку блочным элементом */
+    width: 100%;    /* Занимаем всю ширину родителя */
+    height: 100%;   /* Занимаем всю высоту родителя */
+    color: #fff;
+    text-decoration: none;
+    font-weight: bold;
+    display: flex; /* Центрируем текст по вертикали и горизонтали */
+    justify-content: center;
+    align-items: center;
+}
+
+.categories li.active {
+    border: 2px solid #ff0000; /* Красная граница для активного элемента */
+}
+
+.categories li:hover {
+    transform: scale(1.1); /* Увеличение на 10% */
+    transition: transform 0.3s ease; /* Плавная анимация */
+}
+
+.container {
+    width: 90%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.content {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+/* Каждый фильм в отдельном блоке */
+.movie {
+    margin: auto;
+    margin-bottom: 40px;
+    width: 60%;
+    height: 1%;
+}
+
+/* Стили для плеера */
+iframe {
+    width: 100%;
+    height: 500px;
+    border: none;
+    border-radius: 10px;
+}
+
+.poster img {
+    padding: 30px;
+    width: 250px;
+    margin-left: 73px;
+    margin-top: -25px;
+}
+
+.details {
+    max-width: 50%;
+    padding-left: 0px;
+}
+
+.details h1 {
+    color: #ff0000;
+    margin-bottom: 15px;
+}
+
+.details p {
+    margin-bottom: 10px;
+    font-size: 16px;
+}
+
+.description {
+    background-color: #202020;
+    padding: 15px;
+    border-radius: 10px;
+    margin-left: 100px;
+    width: 955px;
+    margin-top: -40px;
+    word-wrap: break-word; /* Переносит длинные слова */
+    overflow-wrap: break-word; /* Совместимость для современных браузеров */
+}
+
+.description h2 {
+    color: #ff0000;
+    margin-bottom: 10px;
+}
+
+.description p {
+    line-height: 1.5;
+    color: #b3b3b3;
+}
+
+.container_banner {
+    position: relative; /* Устанавливаем относительное позиционирование для родительского контейнера */
+}
+
+.content_banner {
+    display: flex; /* Устанавливаем флекс-контейнер */
+    justify-content: space-between; /* Размещаем элементы по краям */
+}
+
+.banner_left {
+    float: left; /* Плавающее расположение справа */
+    width: 280px; /* Ширина баннера */
+    height: 800px; /* Высота баннера */
+    background-color: #333; /* Цвет фона баннера */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #fff; /* Цвет текста */
+    font-size: 20px; /* Размер шрифта */
+    position: fixed; /* Закрепляем баннеры по бокам */
+    top: 0;
+}
+
+.banner_right {
+    position: fixed; /* Устанавливаем абсолютное позиционирование */
+    right: 0px; /* Расстояние от правого края */
+    top: 0; /* Расположение по вертикали */
+    width: 280px; /* Ширина баннера */
+    height: 800px; /* Высота баннера */
+    background-color: #333; /* Цвет фона баннера */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #fff; /* Цвет текста */
+    font-size: 20px; /* Размер шрифта */
+
+}

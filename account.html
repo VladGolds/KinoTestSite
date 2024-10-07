@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Регистрация</title>
+    <link rel="stylesheet" href="account.css">
+    <script type="module">
+        // Импорт необходимых функций из Firebase SDK
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
+        import { getDatabase, set, ref, push } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-database.js";
+
+        // Ваши настройки Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyBSoLu_7Z9MTOUQPrBXtMpKxn-DT4Hi8M0",
+            authDomain: "films-fa532.firebaseapp.com",
+            databaseURL: "https://films-fa532-default-rtdb.europe-west1.firebasedatabase.app",
+            projectId: "films-fa532",
+            storageBucket: "films-fa532.appspot.com",
+            messagingSenderId: "412236069839",
+            appId: "1:412236069839:web:09caa4d94e1349e006b0ba"
+        };
+
+        // Инициализация Firebase
+        const app = initializeApp(firebaseConfig);
+        const database = getDatabase(app);
+        
+        // Обработчик отправки формы регистрации
+        document.getElementById('registration-form')?.addEventListener('submit', (e) => {
+            e.preventDefault(); // Предотвращаем перезагрузку страницы
+
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const email = document.getElementById('email').value;
+
+            // Сохраняем данные в Firebase с использованием имени пользователя в качестве ID
+            const usersRef = ref(database, 'users/' + username);
+
+            // Сохраняем данные в Firebase
+            set(usersRef, {
+                username: username,
+                password: password,
+                email: email,
+                role: 'user'
+            }).then(() => {
+                alert("Регистрация прошла успешно!");
+                localStorage.setItem('username', username); // Сохраняем имя пользователя в localStorage
+                document.getElementById('registration-form').reset(); // Очищаем форму
+                updateUI(username); // Обновляем UI с новым именем пользователя
+            }).catch((error) => {
+                console.error("Ошибка регистрации: ", error);
+                alert("Ошибка регистрации. Попробуйте еще раз.");
+            });
+        });
+
+        // Функция для обновления UI
+        function updateUI(username) {
+            const authButton = document.getElementById('auth-button');
+            authButton?.remove(); // Полностью удаляем элемент из DOM
+
+            const welcomeMessage = document.createElement('span');
+            welcomeMessage.textContent = `Добро пожаловать, ${username}!`;
+            document.querySelector('.auth-buttons')?.appendChild(welcomeMessage); // Добавляем элемент с приветствием
+        }
+
+        // Проверка имени пользователя при загрузке страницы
+        document.addEventListener('DOMContentLoaded', () => {
+            const username = localStorage.getItem('username');
+            if (username) {
+                console.log("Имя пользователя при входе:", username);
+                updateUI(username);
+            }
+        });
+    </script>
+</head>
+</head>
+<body>
+    <div class="container">
+        <h2>Регистрация</h2>
+        <form id="registration-form">
+            <input type="text" id="username" placeholder="Введите свой логин" required>
+            <input type="password" id="password" placeholder="Введите свой пароль" required>
+            <input type="email" id="email" placeholder="Введите свою почту" required>
+            <button type="submit">Зарегистрироваться</button>
+        </form>
+    </div>
+</body>
+</html>
