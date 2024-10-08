@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Криминал - Онлайн Кинотеатр</title>
+    <title>Ruby Films Military</title>
     <link rel="stylesheet" href="style.css">
     <script type="module">
         // Импорт необходимых функций из Firebase SDK
@@ -40,7 +40,7 @@
                 const movies = [];
                 snapshot.forEach((childSnapshot) => {
                     const movie = childSnapshot.val();
-                    if (movie.genre && movie.genre.includes('криминал')) {
+                    if (movie.genre && movie.genre.includes('детектив')) {
                         movies.push({ id: childSnapshot.key, ...movie });
                     }
                 });
@@ -172,7 +172,7 @@
         <h1 style="text-align: center; color: #ff0000;">
             <a href="index.html" style="text-decoration: none; color: inherit;">Test Films</a>
         </h1>
-        <h2>Фильмы - Криминал</h2>
+        <h2>Фильмы - Детективы</h2>
     </header>
 
     <!-- Панель с категориями -->

@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Онлайн Кинотеатр</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="favicon.png" type="image/png">
     <script type="module">
         // Импорт необходимых функций из Firebase SDK
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
@@ -147,6 +148,59 @@
             });
         });
 
+        // Функция поиска фильмов по названию
+        function searchMovies(searchTerm, movies) {
+            const filteredMovies = movies.filter(movie => movie.title.toLowerCase().includes(searchTerm.toLowerCase()));
+            displayMovies(filteredMovies); // Отобразим только отфильтрованные фильмы
+        }
+
+        // Функция отображения фильмов
+        function displayMovies(movies) {
+            moviesGrid.innerHTML = ''; // Очищаем сетку фильмов
+
+            if (movies.length > 0) {
+                movies.forEach((movie) => {
+                    const movieCard = `
+                        <div class="movie-card">
+                            <a href="description.html?movieId=${movie.id}">
+                                <img src="${movie.poster}" alt="${movie.title}">
+                                <h3>${movie.title}</h3>
+                            </a>
+                        </div>
+                    `;
+                    moviesGrid.innerHTML += movieCard;
+                });
+            } else {
+                const noDataMessage = document.createElement("p");
+                noDataMessage.textContent = "Фильмы не найдены.";
+                moviesGrid.appendChild(noDataMessage);
+            }
+        }
+
+        // Обработчик для поиска
+        document.getElementById('search-button').addEventListener('click', () => {
+            const searchInput = document.getElementById('search-input').value;
+            get(moviesRef).then((snapshot) => {
+                if (snapshot.exists()) {
+                    const movies = [];
+                    snapshot.forEach((childSnapshot) => {
+                        movies.push({ id: childSnapshot.key, ...childSnapshot.val() });
+                    });
+
+                    searchMovies(searchInput, movies); // Выполняем поиск по введённому тексту
+                }
+            }).catch((error) => {
+                console.error("Ошибка получения данных: ", error);
+            });
+        });
+
+        // Также можно запустить поиск при нажатии клавиши Enter в поле ввода
+        document.getElementById('search-input').addEventListener('keyup', (event) => {
+            if (event.key === 'Enter') {
+                document.getElementById('search-button').click();
+            }
+        });
+
         // Параметры для пагинации
         const moviesPerPage = 35;  // Количество фильмов на одной странице
         let currentPage = new URLSearchParams(window.location.search).get('page') || 1;  // Текущая страница
@@ -211,6 +265,27 @@
 
         // Делаем функцию глобальной
         window.changePage = changePage;
+
+        function checkOrientation() {
+            // Проверяем ориентацию экрана
+            if (window.innerHeight > window.innerWidth) {
+                // Вертикальная ориентация
+                if (!window.location.pathname.includes('warning.html')) {
+                    window.location.href = 'warning.html'; // Открывает warning.html только если это не warning.html
+                }
+            } else {
+                // Горизонтальная ориентация
+                if (window.location.pathname.includes('warning.html')) {
+                    window.location.href = 'index.html'; // Переход на index.html
+                }
+            }
+        }
+
+        // Проверка ориентации при загрузке страницы
+        checkOrientation();
+
+        // Слушаем событие изменения размера окна
+        window.addEventListener('resize', checkOrientation);
     </script>
 </head>
 <body>
@@ -233,16 +308,16 @@
         <ul class="categories">
             <li><a href="criminal.html">Криминал</a></li>
             <li><a href="action.html">Боевик</a></li>
-            <li><a href="#M">Военный</a></li>
-            <li><a href="#">Детектив</a></li>
-            <li><a href="#">Ужасы</a></li>
-            <li><a href="#">Комедия</a></li>
-            <li><a href="#">Фанстастика</a></li>
-            <li><a href="#">Триллер</a></li>
+            <li><a href="military.html">Военный</a></li>
+            <li><a href="detective.html">Детектив</a></li>
+            <li><a href="horrors.html">Ужасы</a></li>
+            <li><a href="comedy.html">Комедия</a></li>
+            <li><a href="fantastic.html">Фанстастика</a></li>
+            <li><a href="thriller.html">Триллер</a></li>
         </ul>
         <div class="search-bar">
-            <input type="text" placeholder="Название фильма...">
-            <button>Поиск</button>
+            <input type="text" id="search-input" placeholder="Название фильма...">
+            <button id="search-button">Поиск</button>
         </div>
     </nav>
 
