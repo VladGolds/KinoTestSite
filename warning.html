@@ -16,6 +16,21 @@
             text-align: center;
         }
     </style>
+    <script>
+        function checkOrientation() {
+            // Проверяем ориентацию экрана
+            if (window.innerHeight <= window.innerWidth) {
+                // Горизонтальная ориентация
+                window.location.href = 'index.html'; // Переход на index.html
+            }
+        }
+
+        // Проверка ориентации при загрузке страницы
+        checkOrientation();
+
+        // Слушаем событие изменения размера окна
+        window.addEventListener('resize', checkOrientation);
+    </script>
 </head>
 <body>
     <div>

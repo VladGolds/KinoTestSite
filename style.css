@@ -138,7 +138,7 @@ nav {
 
 .categories li {
     margin-right: 20px;
-    margin-bottom: 0px; /* Добавляем отступ между строками */
+    margin-bottom: 10px; /* Добавляем отступ между строками */
     display: flex;
     justify-content: center; /* Центрируем текст по горизонтали */
     align-items: center; /* Центрируем текст по вертикали */
@@ -178,16 +178,21 @@ nav {
 }
 
 .search-bar input {
-    padding: 5px;
-    font-size: 16px;
+    padding: 3px; /* Уменьшаем внутренние отступы */
+    font-size: 12px; /* Уменьшаем размер шрифта */
+    width: 150px; /* Уменьшаем ширину поля ввода */
+    height: 51px;
 }
 
 .search-bar button {
-    padding: 6px 10px;
-    background-color: #f00;
-    border: none;
-    color: #fff;
-    cursor: pointer;
+    padding: 4px 8px; /* Уменьшаем внутренние отступы для кнопки */
+    font-size: 12px; /* Уменьшаем размер шрифта */
+    background-color: #f00; /* Цвет кнопки */
+    border: none; /* Убираем рамку */
+    color: #fff; /* Цвет текста */
+    cursor: pointer; /* Указатель мыши при наведении */
+    height: 59px;
+    margin-top: 1px;
 }
 
 /* Основной контент */
@@ -264,6 +269,27 @@ footer {
     width: 100%;
     bottom: 0;
     left: 0;
+}
+
+/* Адаптация для экранов с разрешением 932x430 */
+@media (max-width: 932px) and (min-height: 430px) {
+    h1 {
+        font-size: 26px; /* Уменьшаем шрифт заголовка */
+    }
+
+    .movie-card h3 {
+        font-size: 13px; /* Уменьшаем шрифт названия фильма */
+    }
+
+    .auth-button, .admin-button button {
+        width: 100%; /* Кнопки занимают всю ширину */
+    }
+
+    .container {
+        grid-template-columns: repeat(2, 1fr); /* Две колонки */
+    }
+
+    /* Добавьте другие стили для адаптации под горизонтальную ориентацию */
 }
 
 /* Мобильная адаптация */
