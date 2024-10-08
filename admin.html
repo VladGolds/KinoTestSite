@@ -50,7 +50,7 @@
                 }
 
                 // Преобразование idName (например, "the_matrix")
-                const movieId = idName.toLowerCase().replace(/\s+/g, '_').replace(/[^a-z0-9_]/g, '');
+                const movieId = idName.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9_]/g, '');
 
                 // Ссылка на базу данных Firebase (movies collection)
                 const movieRef = ref(database, 'movies/' + movieId);
